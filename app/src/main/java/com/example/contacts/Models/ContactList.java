@@ -14,12 +14,6 @@ public class ContactList {
         contacts.add(new Contact("Sulav", "Panday", "123222444", "sulavpanday@gmail.com"));
         contacts.add(new Contact("Prakriti", "Dahal", "9832555224", "dahalprakriti@gmail.com"));
         contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-        contacts.add(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
     }
 
     public static ContactList getInstance() {
