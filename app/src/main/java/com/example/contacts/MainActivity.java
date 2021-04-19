@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -93,6 +96,25 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, contact.getFullName()+" added to contacts", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "Contact not saved", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_all_contacts:
+                contactViewModal.deleteAllContacts();
+                Toast.makeText(MainActivity.this, "All contacts deleted", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
