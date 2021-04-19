@@ -5,32 +5,52 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.contacts.Models.Contact;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ContactAdapter extends ArrayAdapter<Contact> {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHolder> {
 
-    public ContactAdapter(@NonNull Context context, @NonNull List<Contact> objects) {
-        /* The layout resource id is 0 because we are inflating layout ourselves in the getView method*/
-        super(context, 0, objects);
-    }
+    private List<Contact> contacts = new ArrayList<>();
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View listItemView = convertView;
-        if (convertView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+    public ContactHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false);
+        return new ContactHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ContactHolder holder, int position) {
+        Contact currentNote = contacts.get(position);
+        holder.textViewName.setText(currentNote.getFullName());
+    }
+
+    @Override
+    public int getItemCount() {
+        return contacts.size();
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+        notifyDataSetChanged();
+    }
+
+    class ContactHolder extends RecyclerView.ViewHolder {
+        private ImageView imageViewPhoto;
+        private TextView textViewName;
+
+        public ContactHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewName = itemView.findViewById(R.id.full_name_text_view);
         }
-        Contact contact = getItem(position);
-        TextView textView = (TextView) listItemView.findViewById(R.id.full_name_text_view);
-        textView.setText(contact.getFullName());
-        return listItemView;
     }
 }

@@ -47,12 +47,6 @@ public abstract class ContactDatabase extends RoomDatabase {
             contactDao.insert(new Contact("Sulav", "Panday", "123222444", "sulavpanday@gmail.com"));
             contactDao.insert(new Contact("Prakriti", "Dahal", "9832555224", "dahalprakriti@gmail.com"));
             contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
-            contactDao.insert(new Contact("Sujan", "Shrestha", "9841454289", "suzanshrestha1@gmail.com"));
             return null;
         }
     }

@@ -1,8 +1,14 @@
 package com.example.contacts;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,40 +21,60 @@ import android.widget.Toast;
 import com.example.contacts.Models.Contact;
 import com.example.contacts.Models.ContactList;
 import com.example.contacts.Models.ContactViewModal;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int ADD_CONTACT_REQUEST_CODE = 200;
+
     private ContactViewModal contactViewModal;
 
-    ListView listView;
-    ArrayList<Contact> contacts = ContactList.getContacts();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contactViewModal = new ViewModelProvider(this).get(ContactViewModal.class);
+        RecyclerView recyclerView = findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        ContactAdapter adapter = new ContactAdapter();
+        recyclerView.setAdapter(adapter);
+
+        contactViewModal = ViewModelProviders.of(this).get(ContactViewModal.class);
         contactViewModal.getContacts().observe(this, new Observer<List<Contact>>() {
             @Override
             public void onChanged(List<Contact> contacts) {
-                // update RecyclerView or ListView
-                Toast.makeText(MainActivity.this, "onChanged", Toast.LENGTH_LONG).show();
+                adapter.setContacts(contacts);
             }
         });
 
-        ContactAdapter adapter = new ContactAdapter(this, contacts);
-        listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        FloatingActionButton  addContactButton = findViewById(R.id.add_contact_button);
+        addContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, ContactActivity.class);
-                intent.putExtra("EXTRA_LIST_ITEM_POSITION", position);
-                startActivity(intent);
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+                startActivityForResult(intent, ADD_CONTACT_REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_CONTACT_REQUEST_CODE && resultCode == RESULT_OK) {
+            String firstName = data.getStringExtra(AddContactActivity.EXTRA_FIRST_NAME);
+            String lastName = data.getStringExtra(AddContactActivity.EXTRA_LAST_NAME);
+            String phoneNumber = data.getStringExtra(AddContactActivity.EXTRA_PHONE_NUMBER);
+            String emailAddress = data.getStringExtra(AddContactActivity.EXTRA_EMAIL_ADDRESS);
+
+            Contact contact = new Contact(firstName, lastName, phoneNumber, emailAddress);
+            contactViewModal.insert(contact);
+            Toast.makeText(this, contact.getFullName()+" added to contacts", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Contact not saved", Toast.LENGTH_LONG).show();
+        }
     }
 }

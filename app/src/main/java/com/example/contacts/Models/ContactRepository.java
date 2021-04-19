@@ -18,15 +18,15 @@ public class ContactRepository {
     }
 
     public void insert(Contact contact) {
-        new InsertContactAsyncTask(contactDao).execute();
+        new InsertContactAsyncTask(contactDao).execute(contact);
     }
 
     public void update(Contact contact) {
-        new UpdateContactAsyncTask(contactDao).execute();
+        new UpdateContactAsyncTask(contactDao).execute(contact);
     }
 
     public void delete (Contact contact) {
-        new DeleteContactAsyncTask(contactDao).execute();
+        new DeleteContactAsyncTask(contactDao).execute(contact);
     }
 
     public void deleteAllContacts() {
