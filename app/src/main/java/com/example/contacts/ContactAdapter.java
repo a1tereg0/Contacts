@@ -39,6 +39,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
         return contacts.size();
     }
 
+    public Contact getContact(int index) {
+        return contacts.get(index);
+    }
+
     public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
         notifyDataSetChanged();
