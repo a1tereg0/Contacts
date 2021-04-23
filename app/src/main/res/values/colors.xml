@@ -10,8 +10,8 @@
     <color name="grey_800">#424242</color>
 
     <color name="backgroundColor">#fafafa</color>
-    <color name="colorPrimary">#00e676</color>
-    <color name="colorPrimaryVariant">#00c853</color>
-    <color name="colorSecondary">#ba68c8</color>
-    <color name="colorSecondaryVariant">#9c27b0</color>
+    <color name="colorPrimary">#5cdb95</color>
+    <color name="colorPrimaryVariant">#edf5e1</color>
+    <color name="colorSecondary">#05386b</color>
+    <color name="colorSecondaryVariant">#379683</color>
 </resources>

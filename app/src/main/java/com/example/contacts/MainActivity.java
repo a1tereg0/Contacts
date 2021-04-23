@@ -3,37 +3,30 @@ package com.example.contacts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.contacts.Models.Contact;
-import com.example.contacts.Models.ContactList;
 import com.example.contacts.Models.ContactViewModal;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_CONTACT_REQUEST_CODE = 200;
+    public static final int EDIT_CONTACT_REQUEST_CODE = 201;
 
     private ContactViewModal contactViewModal;
 
@@ -48,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         ContactAdapter adapter = new ContactAdapter();
         recyclerView.setAdapter(adapter);
 
-        contactViewModal = ViewModelProviders.of(this).get(ContactViewModal.class);
+        contactViewModal = new ViewModelProvider(this).get(ContactViewModal.class);
         contactViewModal.getContacts().observe(this, new Observer<List<Contact>>() {
             @Override
             public void onChanged(List<Contact> contacts) {
@@ -56,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton  addContactButton = findViewById(R.id.add_contact_button);
+        FloatingActionButton addContactButton = findViewById(R.id.add_contact_button);
         addContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+                Intent intent = new Intent(MainActivity.this, ContactActivity.class);
                 startActivityForResult(intent, ADD_CONTACT_REQUEST_CODE);
             }
         });
@@ -76,9 +69,22 @@ public class MainActivity extends AppCompatActivity {
                 int position = viewHolder.getAdapterPosition();
                 Contact contact = adapter.getContact(position);
                 contactViewModal.delete(contact);
-                Toast.makeText(MainActivity.this, contact.getFullName()+" deleted from contacts", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, contact.getFullName() + " deleted from contacts", Toast.LENGTH_LONG).show();
             }
         }).attachToRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Contact contact) {
+                Intent intent = new Intent(MainActivity.this, ContactActivity.class);
+                intent.putExtra(ContactActivity.EXTRA_ID, contact.getId());
+                intent.putExtra(ContactActivity.EXTRA_FIRST_NAME, contact.getFirstName());
+                intent.putExtra(ContactActivity.EXTRA_LAST_NAME, contact.getLastName());
+                intent.putExtra(ContactActivity.EXTRA_PHONE_NUMBER, contact.getPhoneNumber());
+                intent.putExtra(ContactActivity.EXTRA_EMAIL_ADDRESS, contact.getEmail());
+                startActivityForResult(intent, EDIT_CONTACT_REQUEST_CODE);
+            }
+        });
 
     }
 
@@ -86,16 +92,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_CONTACT_REQUEST_CODE && resultCode == RESULT_OK) {
-            String firstName = data.getStringExtra(AddContactActivity.EXTRA_FIRST_NAME);
-            String lastName = data.getStringExtra(AddContactActivity.EXTRA_LAST_NAME);
-            String phoneNumber = data.getStringExtra(AddContactActivity.EXTRA_PHONE_NUMBER);
-            String emailAddress = data.getStringExtra(AddContactActivity.EXTRA_EMAIL_ADDRESS);
+            String firstName = data.getStringExtra(ContactActivity.EXTRA_FIRST_NAME);
+            String lastName = data.getStringExtra(ContactActivity.EXTRA_LAST_NAME);
+            String phoneNumber = data.getStringExtra(ContactActivity.EXTRA_PHONE_NUMBER);
+            String emailAddress = data.getStringExtra(ContactActivity.EXTRA_EMAIL_ADDRESS);
 
             Contact contact = new Contact(firstName, lastName, phoneNumber, emailAddress);
             contactViewModal.insert(contact);
-            Toast.makeText(this, contact.getFullName()+" added to contacts", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Contact not saved", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, contact.getFullName() + " added to contacts", Toast.LENGTH_LONG).show();
+        } else if (requestCode == EDIT_CONTACT_REQUEST_CODE && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(ContactActivity.EXTRA_ID, -1);
+            if (id == -1) {
+                Toast.makeText(this, "Can't update", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String firstName = data.getStringExtra(ContactActivity.EXTRA_FIRST_NAME);
+            String lastName = data.getStringExtra(ContactActivity.EXTRA_LAST_NAME);
+            String phoneNumber = data.getStringExtra(ContactActivity.EXTRA_PHONE_NUMBER);
+            String emailAddress = data.getStringExtra(ContactActivity.EXTRA_EMAIL_ADDRESS);
+
+            Contact updatedContact = new Contact(firstName, lastName, phoneNumber, emailAddress);
+            updatedContact.setId(id);
+            contactViewModal.update(updatedContact);
+
         }
     }
 
